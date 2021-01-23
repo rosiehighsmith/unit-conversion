@@ -1,0 +1,66 @@
+<form id="conversion_form" [formGroup]="conversionForm" (ngSubmit)="checkAnswer()">
+  <div>
+    <h3>Conversion Type</h3>
+    <form id="type_form" [formGroup]="conversionTypeForm">
+      <label class="conversion_type">
+        <input
+          type="radio"
+          value="temperature"
+          formControlName="conversionType"
+        />
+        <span>Temperature</span>
+      </label>
+      <label class="conversion_type">
+        <input type="radio" value="volume" formControlName="conversionType" />
+        <span>Volume</span>
+      </label>
+    </form>
+  </div>
+
+  <ng-container>
+    <label>
+      Input Value
+      <input type="text" formControlName="inputValue" />
+    </label>
+    <div>
+      <label>
+        Input Units
+      </label>
+      <select *ngIf="conversionTypeControl.value === 'temperature'; else volumeInput"
+        formControlName="inputUnits"
+        (change)="pickInputUnits($event)">
+        <option *ngFor="let unit of temperatureInputUnits" [ngValue]="unit">{{unit}}</option>
+      </select>
+      <ng-template #volumeInput>
+        <select formControlName="inputUnits" (change)="pickInputUnits($event)">
+          <option *ngFor="let unit of volumeInputUnits" [ngValue]="unit">{{unit}}</option>
+        </select>
+      </ng-template>
+    </div>
+    <div>
+      <label>
+        Target Units
+      </label>
+      <select *ngIf="conversionTypeControl.value === 'temperature'; else volumeTarget"
+        formControlName="targetUnits"
+        (change)="pickTargetUnits($event)">
+        <option *ngFor="let unit of temperatureInputUnits" [ngValue]="unit">{{unit}}</option>
+      </select>
+      <ng-template #volumeTarget>
+        <select formControlName="targetUnits" (change)="pickTargetUnits($event)">
+          <option *ngFor="let unit of volumeInputUnits" [ngValue]="unit">{{unit}}</option>
+        </select>
+      </ng-template>
+    </div>
+    <label>
+      Student Input
+      <input type="text" formControlName="studentInput" />
+    </label>
+  </ng-container>
+  <button type="submit">Check Answer</button>
+  <button (click)="clearForm()">Clear Form</button>
+</form>
+
+<h1 id="result_field">{{result}}</h1>
+
+{{ conversionForm.value | json }}

@@ -1,0 +1,13 @@
+#conversion_form {
+  display: grid;
+  gap: 10px;
+}
+
+input[type="text"], select {
+  width: 80px;
+}
+
+button {
+  width: 90px;
+  height: 45px;
+}

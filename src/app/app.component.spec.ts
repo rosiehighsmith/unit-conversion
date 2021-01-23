@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
@@ -9,8 +10,9 @@ describe('AppComponent', () => {
         RouterTestingModule
       ],
       declarations: [
-        AppComponent
-      ],
+        AppComponent,
+        MockConversionComponent
+      ]
     }).compileComponents();
   });
 
@@ -25,11 +27,11 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     expect(app.title).toEqual('conversionator');
   });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('conversionator app is running!');
-  });
 });
+
+@Component({
+  selector: 'app-conversion',
+  template: ''
+})
+class MockConversionComponent {
+}
