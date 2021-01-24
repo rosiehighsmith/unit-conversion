@@ -1,4 +1,4 @@
-# Unit Conversion Grading Tool
+# Unit Conversion Grader
 
 ## Installation
 

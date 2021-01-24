@@ -22,10 +22,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'conversionator'`, () => {
+  it(`should have as title 'Unit Conversion Grader'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('conversionator');
+    expect(app.title).toEqual('Unit Conversion Grader');
   });
 });
 
