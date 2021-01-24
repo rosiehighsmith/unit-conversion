@@ -20,6 +20,13 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "decimal.js",
+              "typed-function",
+              "complex.js",
+              "fraction.js",
+              "seedrandom"
+            ],
             "outputPath": "dist/conversionator",
             "index": "src/index.html",
             "main": "src/main.ts",
