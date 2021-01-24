@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { TemperatureUnit, VolumeUnit } from '../enums';
+import { TemperatureUnit, VolumeUnit, SystemResponse } from '../enums';
 import { unit } from 'mathjs';
+import { InputDisplay } from './conversion.model';
 
 @Component({
   selector: 'app-conversion',
@@ -9,14 +10,13 @@ import { unit } from 'mathjs';
   styleUrls: ['./conversion.component.scss'],
 })
 export class ConversionComponent implements OnInit {
-  conversionTypeForm: FormGroup;
-  conversionForm: FormGroup;
+  conversionTypeForm: FormGroup = new FormGroup({});
+  conversionForm: FormGroup = new FormGroup({});
   result = '';
 
   get conversionTypeControl(): FormControl {
     return this.conversionTypeForm.get('conversionType') as FormControl;
   }
-
   get inputValueControl(): FormControl {
     return this.conversionForm.get('inputValue') as FormControl;
   }
@@ -30,23 +30,29 @@ export class ConversionComponent implements OnInit {
     return this.conversionForm.get('studentResponse') as FormControl;
   }
 
-  temperatureInputUnits = [
+  temperatureInputUnits: InputDisplay[] = [
     { value: 'degC', displayValue: TemperatureUnit.Celsius },
     { value: 'degF', displayValue: TemperatureUnit.Fahrenheit },
     { value: 'K', displayValue: TemperatureUnit.Kelvin },
-    { value: 'degR', displayValue: TemperatureUnit.Rankine }
+    { value: 'degR', displayValue: TemperatureUnit.Rankine },
   ];
 
-  volumeInputUnits = [
+  volumeInputUnits: InputDisplay[] = [
     { value: 'cuft', displayValue: VolumeUnit.CubicFeet },
     { value: 'cuin', displayValue: VolumeUnit.CubicInches },
-    { value: 'cup', displayValue: VolumeUnit.Cups }, // liquid vol
-    { value: 'gallon', displayValue: VolumeUnit.Gallons }, // liquid vol
+    { value: 'cup', displayValue: VolumeUnit.Cups },
+    { value: 'gallon', displayValue: VolumeUnit.Gallons },
     { value: 'litre', displayValue: VolumeUnit.Liters },
-    { value: 'tablespoon', displayValue: VolumeUnit.Tablespoons }
+    { value: 'tablespoon', displayValue: VolumeUnit.Tablespoons },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.initializeForm();
+  }
+
+  initializeForm(): void {
     this.conversionTypeForm = this.fb.group({
       conversionType: 'temperature',
     });
@@ -60,14 +66,12 @@ export class ConversionComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
-
   checkAnswer(): void {
     if (
       !this.isValidInput(this.studentResponseControl) ||
       !this.isValidInput(this.inputValueControl)
     ) {
-      this.result = 'invalid';
+      this.result = SystemResponse.Invalid;
       return;
     } else {
       this.result = this.isCorrectConversion();
@@ -75,7 +79,7 @@ export class ConversionComponent implements OnInit {
   }
 
   isValidInput(control: FormControl): boolean {
-    return !isNaN(Number(control.value));
+    return control.value !== '' && !isNaN(Number(control.value));
   }
 
   isCorrectConversion(): string {
@@ -92,9 +96,9 @@ export class ConversionComponent implements OnInit {
         1
       )
     ) {
-      return 'correct';
+      return SystemResponse.Correct;
     }
-    return 'incorrect';
+    return SystemResponse.Incorrect;
   }
 
   convertUnits(
@@ -116,12 +120,16 @@ export class ConversionComponent implements OnInit {
   }
 
   pickInputUnits(event: any): void {
+    console.log('pickInputUnits event', event);
+
     this.conversionForm.patchValue({
       inputUnits: event.target.value,
     });
   }
 
   pickTargetUnits(event: any): void {
+    console.log('event', event);
+
     this.conversionForm.patchValue({
       targetUnits: event.target.value,
     });
@@ -129,6 +137,6 @@ export class ConversionComponent implements OnInit {
 
   clearForm(): void {
     this.conversionForm.reset();
-    this.result = ''; // todo: why isn't this updating the UI?
+    this.result = '';
   }
 }

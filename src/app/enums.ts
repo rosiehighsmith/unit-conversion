@@ -13,3 +13,9 @@ export enum VolumeUnit {
   CubicFeet = 'cubic-feet',
   Gallons = 'gallons'
 }
+
+export enum SystemResponse {
+  Invalid = 'invalid',
+  Correct = 'correct',
+  Incorrect = 'incorrect',
+}

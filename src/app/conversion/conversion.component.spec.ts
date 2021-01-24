@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 
 import { ConversionComponent } from './conversion.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { SystemResponse } from '../enums';
+import { defaultFormControls, formControlsToValidate, temperatureConversionTestCases } from './conversion.test-data';
 
 describe('ConversionComponent', () => {
   let component: ConversionComponent;
@@ -30,17 +32,6 @@ describe('ConversionComponent', () => {
 
       expect(conversionForm).not.toBeNull();
     });
-
-    const defaultFormControls = [
-      {
-        formControlName: 'conversionTypeForm',
-        expectedValue: { conversionType: 'temperature' },
-      },
-      { formControlName: 'inputValue', expectedValue: '' },
-      { formControlName: 'inputUnits', expectedValue: '' },
-      { formControlName: 'targetUnits', expectedValue: '' },
-      { formControlName: 'studentResponse', expectedValue: '' },
-    ];
 
     defaultFormControls.forEach((test) => {
       it(`should contain ${test.expectedValue} for ${test.formControlName} form field by default`, () => {
@@ -77,15 +68,8 @@ describe('ConversionComponent', () => {
   });
 
   describe('isValidInput()', () => {
-    const formControlsToValidate = [
-      { control: 'inputValue', inputValue: '2', expectedValue: true },
-      { control: 'inputValue', inputValue: 'woof', expectedValue: false },
-      { control: 'studentResponse', inputValue: '34', expectedValue: true },
-      { control: 'studentResponse', inputValue: 'woof', expectedValue: false },
-    ];
-
     formControlsToValidate.forEach((test) => {
-      it(`should return "${test.expectedValue}" with inputValue ${test.inputValue}
+      it(`should return "${test.expectedValue}" with inputValue "${test.inputValue}"
       for control "${test.control}"`, () => {
         const control = component.conversionForm.get(
           test.control
@@ -100,46 +84,6 @@ describe('ConversionComponent', () => {
   });
 
   describe('convertUnits()', () => {
-    // todo: check conversion from each of the types (not all tho)
-    const temperatureConversionTestCases = [
-      {
-        inputValue: 32,
-        inputUnits: {value: 'degF'},
-        targetUnits: {value: 'degC'},
-        expectedResult: 0,
-      },
-      {
-        inputValue: 0,
-        inputUnits: {value: 'degC'},
-        targetUnits: {value: 'degF'},
-        expectedResult: 32,
-      },
-      {
-        inputValue: 32,
-        inputUnits: {value: 'degF'},
-        targetUnits: {value: 'degF'},
-        expectedResult: 32,
-      },
-      {
-        inputValue: 0,
-        inputUnits: {value: 'degC'},
-        targetUnits: {value: 'degC'},
-        expectedResult: 0,
-      },
-      {
-        inputValue: 0,
-        inputUnits: {value: 'degC'},
-        targetUnits: {value: 'K'},
-        expectedResult: 273.15,
-      },
-      {
-        inputValue: 0,
-        inputUnits: {value: 'degC'},
-        targetUnits: {value: 'degR'},
-        expectedResult: 491.67,
-      },
-    ];
-
     temperatureConversionTestCases.forEach((test) => {
       it(`should return "${test.expectedResult}" for
          ${test.inputValue} ${test.inputUnits.value} to ${test.targetUnits.value}`, () => {
@@ -196,23 +140,78 @@ describe('ConversionComponent', () => {
     });
   });
 
-  xdescribe('checkAnswer()', () => {
-    // calls isValidInput and sets result to invalid if true
-    // calls isValidInput true, should call isCorrectConversion
-  });
+  describe('checkAnswer()', () => {
+    it('should call isCorrectConversion() if text input controls are valid', () => {
+      component.studentResponseControl?.setValue('20');
+      component.inputValueControl?.setValue('40');
+      spyOn(component, 'isCorrectConversion');
+      spyOn(component, 'isValidInput').and.callThrough();
 
-  xdescribe('isCorrectConversion()', () => {
-    it('should convertUnits()', () => {
-      // spyOn(component, 'convertUnits').and.callThrough();
+      component.checkAnswer();
 
-      // expect(component.convertUnits).toHaveBeenCalledTimes(1);
+      expect(component.isCorrectConversion).toHaveBeenCalled();
+      expect(component.isValidInput).toHaveBeenCalledWith(component.studentResponseControl);
+      expect(component.isValidInput).toHaveBeenCalledWith(component.inputValueControl);
     });
 
-    // calls roundedAnswersMatch and returns correct if true
-    // calls roundedAnswersMatch and returns incorrect if false
+    it('should return invalid response if text input controls are not valid', () => {
+      component.studentResponseControl?.setValue('BOOOOO');
+      component.inputValueControl?.setValue('40');
+      spyOn(component, 'isCorrectConversion');
+
+      component.checkAnswer();
+
+      expect(component.result).toEqual(SystemResponse.Invalid);
+      expect(component.isCorrectConversion).not.toHaveBeenCalled();
+    });
   });
 
-  xdescribe('pickInputUnits(), pickTargetUnits', () => {
+  describe('isCorrectConversion()', () => {
+    it('should call convertUnits()', () => {
+      spyOn(component, 'convertUnits').and.callThrough();
+
+      component.isCorrectConversion();
+
+      expect(component.convertUnits).toHaveBeenCalled();
+    });
+
+    xit('should return correct response if roundedAnswersMatch()', () => {
+      spyOn(component, 'roundedAnswersMatch').and.returnValue(true);
+
+      component.isCorrectConversion();
+      fixture.detectChanges();
+
+      expect(component.roundedAnswersMatch).toHaveBeenCalled();
+      expect(component.result).toEqual(SystemResponse.Correct);
+    });
+
+    xit('should return incorrect response if rounded answers do not match', () => {
+      spyOn(component, 'roundedAnswersMatch').and.returnValue(false);
+
+      component.isCorrectConversion();
+      fixture.detectChanges();
+
+      expect(component.roundedAnswersMatch).toHaveBeenCalled();
+      expect(component.result).toEqual(SystemResponse.Incorrect);
+    });
+  });
+
+  describe('pickInputUnits(), pickTargetUnits', () => {
     // updates the conversionForm
+    xit('should update conversionForm.targetUnits', () => {
+      expect(component.targetUnitsControl?.value).toEqual('');
+      component.pickTargetUnits('degK');
+      console.log('*****', component.targetUnitsControl);
+
+      expect(component.targetUnitsControl?.value).toEqual('degK');
+    });
+
+    xit('should call convertUnits()', () => {
+      spyOn(component, 'convertUnits').and.callThrough();
+
+      component.isCorrectConversion();
+
+      expect(component.convertUnits).toHaveBeenCalled();
+    });
   });
 });
