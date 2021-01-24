@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { ConversionComponent } from './conversion.component';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SystemResponse } from '../enums';
 import {
   correctCompletedForm,

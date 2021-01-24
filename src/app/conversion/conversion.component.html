@@ -21,68 +21,66 @@
     </form>
   </div>
 
-  <ng-container>
-    <label>
-      Input Value
-      <input type="text" formControlName="inputValue" />
-    </label>
-    <div>
-      <label> Input Units </label>
+  <label>
+    Input Value
+    <input type="text" formControlName="inputValue" />
+  </label>
+  <div>
+    <label> Input Units </label>
+    <select
+      *ngIf="conversionTypeControl.value === 'temperature'; else volumeInput"
+      formControlName="inputUnits"
+      (change)="pickInputUnits($any($event.target).value)"
+      id="temperature_select_input"
+    >
+      <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">
+        {{ unit.displayValue }}
+      </option>
+    </select>
+    <ng-template #volumeInput>
       <select
-        *ngIf="conversionTypeControl.value === 'temperature'; else volumeInput"
         formControlName="inputUnits"
         (change)="pickInputUnits($any($event.target).value)"
-        id="temperature_select_input"
+        id="volume_select_input"
       >
-        <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">
+        <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">
           {{ unit.displayValue }}
         </option>
       </select>
-      <ng-template #volumeInput>
-        <select
-          formControlName="inputUnits"
-          (change)="pickInputUnits($any($event.target).value)"
-          id="volume_select_input"
-        >
-          <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">
-            {{ unit.displayValue }}
-          </option>
-        </select>
-      </ng-template>
-    </div>
-    <div>
-      <label> Target Units </label>
+    </ng-template>
+  </div>
+  <div>
+    <label> Target Units </label>
+    <select
+      *ngIf="conversionTypeControl.value === 'temperature'; else volumeTarget"
+      formControlName="targetUnits"
+      (change)="pickTargetUnits($any($event.target).value)"
+      id="temperature_select_target"
+    >
+      <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">
+        {{ unit.displayValue }}
+      </option>
+    </select>
+    <ng-template #volumeTarget>
       <select
-        *ngIf="conversionTypeControl.value === 'temperature'; else volumeTarget"
         formControlName="targetUnits"
         (change)="pickTargetUnits($any($event.target).value)"
-        id="temperature_select_target"
+        id="volume_select_target"
       >
-        <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">
+        <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">
           {{ unit.displayValue }}
         </option>
       </select>
-      <ng-template #volumeTarget>
-        <select
-          formControlName="targetUnits"
-          (change)="pickTargetUnits($any($event.target).value)"
-          id="volume_select_target"
-        >
-          <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">
-            {{ unit.displayValue }}
-          </option>
-        </select>
-      </ng-template>
-    </div>
-    <label>
-      Student Response
-      <input type="text" formControlName="studentResponse" />
-    </label>
-  </ng-container>
+    </ng-template>
+  </div>
+  <label>
+    Student Response
+    <input type="text" formControlName="studentResponse" />
+  </label>
   <button type="submit" [disabled]="!conversionForm.valid">Check Answer</button>
   <span *ngIf="!conversionForm.valid" class="alert">
     All fields are required before submitting.
-    </span>
+  </span>
 </form>
 
 <h1>{{ result }}</h1>
