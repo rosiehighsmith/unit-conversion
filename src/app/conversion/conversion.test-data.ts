@@ -1,3 +1,33 @@
+export const correctCompletedForm = {
+  conversionTypeForm: {
+    conversionType: 'temperature',
+  },
+  inputValue: '25',
+  inputUnits: 'degF',
+  targetUnits: 'degF',
+  studentResponse: '25',
+};
+
+export const incorrectCompletedForm = {
+  conversionTypeForm: {
+    conversionType: 'temperature',
+  },
+  inputValue: '25',
+  inputUnits: 'degF',
+  targetUnits: 'degF',
+  studentResponse: '35',
+};
+
+export const invalidCompletedForm = {
+  conversionTypeForm: {
+    conversionType: 'temperature',
+  },
+  inputValue: 'yolo',
+  inputUnits: 'degF',
+  targetUnits: 'degF',
+  studentResponse: '35',
+};
+
 export const defaultFormControls = [
   {
     formControlName: 'conversionTypeForm',
@@ -13,9 +43,7 @@ export const formControlsToValidate = [
   { control: 'inputValue', inputValue: '2', expectedValue: true },
   { control: 'inputValue', inputValue: 'woof', expectedValue: false },
   { control: 'studentResponse', inputValue: '34', expectedValue: true },
-  { control: 'studentResponse', inputValue: 'woof', expectedValue: false },
-  { control: 'inputValue', inputValue: '', expectedValue: false },
-  { control: 'studentResponse', inputValue: '', expectedValue: false },
+  { control: 'studentResponse', inputValue: 'woof', expectedValue: false }
 ];
 
 export const temperatureConversionTestCases = [

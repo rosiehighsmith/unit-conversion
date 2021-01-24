@@ -5,7 +5,14 @@ import { By } from '@angular/platform-browser';
 import { ConversionComponent } from './conversion.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SystemResponse } from '../enums';
-import { defaultFormControls, formControlsToValidate, temperatureConversionTestCases } from './conversion.test-data';
+import {
+  correctCompletedForm,
+  defaultFormControls,
+  formControlsToValidate,
+  incorrectCompletedForm,
+  invalidCompletedForm,
+  temperatureConversionTestCases,
+} from './conversion.test-data';
 
 describe('ConversionComponent', () => {
   let component: ConversionComponent;
@@ -24,47 +31,6 @@ describe('ConversionComponent', () => {
     debugElement = fixture.debugElement;
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  describe('UI', () => {
-    it('should display a form', () => {
-      const conversionForm = debugElement.query(By.css('#conversion_form'));
-
-      expect(conversionForm).not.toBeNull();
-    });
-
-    defaultFormControls.forEach((test) => {
-      it(`should contain ${test.expectedValue} for ${test.formControlName} form field by default`, () => {
-        expect(
-          component.conversionForm.get(test.formControlName)?.value
-        ).toEqual(test.expectedValue);
-      });
-    });
-
-    it('should display temperature and volume radio buttons to choose conversion type', () => {
-      const conversionTypeRadioButtons = debugElement.queryAll(
-        By.css('.conversion_type')
-      );
-
-      const temperatureRadiobutton = debugElement.queryAll(
-        By.css('.conversion_type')
-      )[0];
-      const volumeRadiobutton = debugElement.queryAll(
-        By.css('.conversion_type')
-      )[1];
-
-      expect(conversionTypeRadioButtons.length).toBe(2);
-      expect(temperatureRadiobutton).not.toBeNull();
-      expect(volumeRadiobutton).not.toBeNull();
-    });
-
-    xit('should display temp units in input/target units when temp conversion type', () => {
-
-    });
-
-    xit('should display volume units in input/target units when vol conversion type', () => {
-
-    });
   });
 
   describe('isValidInput()', () => {
@@ -150,8 +116,12 @@ describe('ConversionComponent', () => {
       component.checkAnswer();
 
       expect(component.isCorrectConversion).toHaveBeenCalled();
-      expect(component.isValidInput).toHaveBeenCalledWith(component.studentResponseControl);
-      expect(component.isValidInput).toHaveBeenCalledWith(component.inputValueControl);
+      expect(component.isValidInput).toHaveBeenCalledWith(
+        component.studentResponseControl
+      );
+      expect(component.isValidInput).toHaveBeenCalledWith(
+        component.inputValueControl
+      );
     });
 
     it('should return invalid response if text input controls are not valid', () => {
@@ -175,43 +145,177 @@ describe('ConversionComponent', () => {
       expect(component.convertUnits).toHaveBeenCalled();
     });
 
-    xit('should return correct response if roundedAnswersMatch()', () => {
+    it('should return correct response if roundedAnswersMatch()', () => {
       spyOn(component, 'roundedAnswersMatch').and.returnValue(true);
 
       component.isCorrectConversion();
-      fixture.detectChanges();
 
       expect(component.roundedAnswersMatch).toHaveBeenCalled();
-      expect(component.result).toEqual(SystemResponse.Correct);
+      expect(component.isCorrectConversion()).toBe(SystemResponse.Correct);
     });
 
-    xit('should return incorrect response if rounded answers do not match', () => {
+    it('should return incorrect response if rounded answers do not match', () => {
       spyOn(component, 'roundedAnswersMatch').and.returnValue(false);
 
       component.isCorrectConversion();
-      fixture.detectChanges();
 
       expect(component.roundedAnswersMatch).toHaveBeenCalled();
-      expect(component.result).toEqual(SystemResponse.Incorrect);
+      expect(component.isCorrectConversion()).toBe(SystemResponse.Incorrect);
     });
   });
 
   describe('pickInputUnits(), pickTargetUnits', () => {
-    // updates the conversionForm
-    xit('should update conversionForm.targetUnits', () => {
-      expect(component.targetUnitsControl?.value).toEqual('');
-      component.pickTargetUnits('degK');
-      console.log('*****', component.targetUnitsControl);
+    it('should update conversionForm.targetUnits', () => {
+      component.pickTargetUnits('K');
+      fixture.detectChanges();
 
-      expect(component.targetUnitsControl?.value).toEqual('degK');
+      expect(component.conversionForm.get('targetUnits')?.value).toEqual('K');
     });
 
-    xit('should call convertUnits()', () => {
-      spyOn(component, 'convertUnits').and.callThrough();
+    it('should update conversionForm.inputUnits', () => {
+      component.pickInputUnits('K');
+      fixture.detectChanges();
 
-      component.isCorrectConversion();
+      expect(component.conversionForm.get('inputUnits')?.value).toEqual('K');
+    });
+  });
 
-      expect(component.convertUnits).toHaveBeenCalled();
+  describe('UI', () => {
+    it('should display a form', () => {
+      const conversionForm = debugElement.query(By.css('#conversion_form'));
+
+      expect(conversionForm).not.toBeNull();
+    });
+
+    it('should show "correct" if checkAnswer() returns with correct response', () => {
+      component.conversionForm.setValue(correctCompletedForm);
+      component.checkAnswer();
+
+      expect(component.result).toEqual(SystemResponse.Correct);
+    });
+
+    it('should show "incorrect" if checkAnswer() returns with incorrect response', () => {
+      component.conversionForm.setValue(incorrectCompletedForm);
+      component.checkAnswer();
+
+      expect(component.result).toEqual(SystemResponse.Incorrect);
+    });
+
+    it('should show "invalid" if checkAnswer() returns with invalid response', () => {
+      component.conversionForm.setValue(invalidCompletedForm);
+      component.checkAnswer();
+
+      expect(component.result).toEqual(SystemResponse.Invalid);
+    });
+
+    defaultFormControls.forEach((test) => {
+      it(`should contain ${test.expectedValue} for ${test.formControlName} form field by default`, () => {
+        expect(
+          component.conversionForm.get(test.formControlName)?.value
+        ).toEqual(test.expectedValue);
+      });
+    });
+
+    it('submit button should be disabled when form is invalid', () => {
+      const checkAnswerButton = fixture.debugElement.query(
+        By.css('button[type=submit]')
+      );
+
+      expect(component.conversionForm.valid).toBe(
+        false,
+        'form should be invalid when form is blank'
+      );
+      expect(checkAnswerButton.properties.disabled).toBe(true);
+    });
+
+    it('submit button should be enabled when form is valid', () => {
+      const checkAnswerButton = fixture.debugElement.query(
+        By.css('button[type=submit]')
+      );
+
+      component.conversionForm.setValue(correctCompletedForm);
+      fixture.detectChanges();
+
+      expect(component.conversionForm.valid).toBe(
+        true,
+        'form should be valid when form is filled out'
+      );
+      expect(checkAnswerButton.properties.disabled).toBe(false);
+    });
+
+    it('should display temperature and volume radio buttons to choose conversion type', () => {
+      const conversionTypeRadioButtons = debugElement.queryAll(
+        By.css('.conversion_type')
+      );
+
+      const temperatureRadiobutton = debugElement.queryAll(
+        By.css('input[value="temperature"]')
+      )[0];
+      const volumeRadiobutton = debugElement.queryAll(
+        By.css('input[value="temperature"]')
+      )[0];
+
+      expect(conversionTypeRadioButtons.length).toBe(2);
+      expect(temperatureRadiobutton).not.toBeNull();
+      expect(volumeRadiobutton).not.toBeNull();
+    });
+
+    it('should display correct units in input/target units when temperature conversion type', () => {
+      component.conversionTypeControl.setValue('temperature');
+      fixture.detectChanges();
+
+      const temperatureInputOptions = debugElement.queryAll(
+        By.css('#temperature_select_input option')
+      );
+      const temperatureTargetOptions = debugElement.queryAll(
+        By.css('#temperature_select_target option')
+      );
+
+      expect(temperatureInputOptions.length).toBe(4);
+      expect(temperatureTargetOptions.length).toBe(4);
+
+      for (let index = 0; index < temperatureInputOptions.length; index++) {
+        const option = temperatureInputOptions[index];
+        expect(option.nativeElement.label).toBe(
+          component.temperatureInputUnits[index].displayValue
+        );
+      }
+
+      for (let index = 0; index < temperatureTargetOptions.length; index++) {
+        const option = temperatureTargetOptions[index];
+        expect(option.nativeElement.label).toBe(
+          component.temperatureInputUnits[index].displayValue
+        );
+      }
+    });
+
+    it('should display correct units in input/target units when volume conversion type', () => {
+      component.conversionTypeControl.setValue('volume');
+      fixture.detectChanges();
+
+      const volumeSelectOptions = debugElement.queryAll(
+        By.css('#volume_select_input option')
+      );
+      const volumeTargetOptions = debugElement.queryAll(
+        By.css('#volume_select_target option')
+      );
+
+      expect(volumeSelectOptions.length).toBe(6);
+      expect(volumeTargetOptions.length).toBe(6);
+
+      for (let index = 0; index < volumeSelectOptions.length; index++) {
+        const option = volumeSelectOptions[index];
+        expect(option.nativeElement.label).toBe(
+          component.volumeInputUnits[index].displayValue
+        );
+      }
+
+      for (let index = 0; index < volumeTargetOptions.length; index++) {
+        const option = volumeTargetOptions[index];
+        expect(option.nativeElement.label).toBe(
+          component.volumeInputUnits[index].displayValue
+        );
+      }
     });
   });
 });

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { TemperatureUnit, VolumeUnit, SystemResponse } from '../enums';
 import { unit } from 'mathjs';
 import { InputDisplay } from './conversion.model';
@@ -59,10 +59,10 @@ export class ConversionComponent implements OnInit {
 
     this.conversionForm = this.fb.group({
       conversionTypeForm: this.conversionTypeForm,
-      inputValue: [''],
-      inputUnits: [''],
-      targetUnits: [''],
-      studentResponse: [''],
+      inputValue: ['', Validators.required],
+      inputUnits: ['', Validators.required],
+      targetUnits: ['', Validators.required],
+      studentResponse: ['', Validators.required],
     });
   }
 
@@ -79,7 +79,7 @@ export class ConversionComponent implements OnInit {
   }
 
   isValidInput(control: FormControl): boolean {
-    return control.value !== '' && !isNaN(Number(control.value));
+    return !isNaN(Number(control.value));
   }
 
   isCorrectConversion(): string {
@@ -106,7 +106,7 @@ export class ConversionComponent implements OnInit {
     inputUnits: string,
     targetUnits: string
   ): number {
-    return unit(`${inputValue} ${inputUnits}`).toNumber(targetUnits);
+    return unit(`${inputValue} ${inputUnits}`)?.toNumber(targetUnits);
   }
 
   roundedAnswersMatch(
@@ -119,24 +119,15 @@ export class ConversionComponent implements OnInit {
     );
   }
 
-  pickInputUnits(event: any): void {
-    console.log('pickInputUnits event', event);
-
+  pickInputUnits(value: any): void {
     this.conversionForm.patchValue({
-      inputUnits: event.target.value,
+      inputUnits: value,
     });
   }
 
-  pickTargetUnits(event: any): void {
-    console.log('event', event);
-
+  pickTargetUnits(value: any): void {
     this.conversionForm.patchValue({
-      targetUnits: event.target.value,
+      targetUnits: value,
     });
-  }
-
-  clearForm(): void {
-    this.conversionForm.reset();
-    this.result = '';
   }
 }
