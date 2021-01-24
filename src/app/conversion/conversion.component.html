@@ -1,8 +1,8 @@
 <form id="conversion_form" [formGroup]="conversionForm" (ngSubmit)="checkAnswer()">
   <div>
-    <h3>Conversion Type</h3>
     <form id="type_form" [formGroup]="conversionTypeForm">
       <label class="conversion_type">
+        Conversion Type
         <input
           type="radio"
           value="temperature"
@@ -29,11 +29,11 @@
       <select *ngIf="conversionTypeControl.value === 'temperature'; else volumeInput"
         formControlName="inputUnits"
         (change)="pickInputUnits($event)">
-        <option *ngFor="let unit of temperatureInputUnits" [ngValue]="unit">{{unit}}</option>
+        <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">{{unit.displayValue}}</option>
       </select>
       <ng-template #volumeInput>
         <select formControlName="inputUnits" (change)="pickInputUnits($event)">
-          <option *ngFor="let unit of volumeInputUnits" [ngValue]="unit">{{unit}}</option>
+          <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">{{unit.displayValue}}</option>
         </select>
       </ng-template>
     </div>
@@ -44,11 +44,11 @@
       <select *ngIf="conversionTypeControl.value === 'temperature'; else volumeTarget"
         formControlName="targetUnits"
         (change)="pickTargetUnits($event)">
-        <option *ngFor="let unit of temperatureInputUnits" [ngValue]="unit">{{unit}}</option>
+        <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">{{unit.displayValue}}</option>
       </select>
       <ng-template #volumeTarget>
         <select formControlName="targetUnits" (change)="pickTargetUnits($event)">
-          <option *ngFor="let unit of volumeInputUnits" [ngValue]="unit">{{unit}}</option>
+          <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">{{unit.displayValue}}</option>
         </select>
       </ng-template>
     </div>

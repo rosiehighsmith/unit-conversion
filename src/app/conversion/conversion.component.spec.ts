@@ -1,9 +1,10 @@
-import { ComponentFixture, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 import { ConversionComponent } from './conversion.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+
 describe('ConversionComponent', () => {
   let component: ConversionComponent;
   let fixture: ComponentFixture<ConversionComponent>;
@@ -65,9 +66,17 @@ describe('ConversionComponent', () => {
       expect(temperatureRadiobutton).not.toBeNull();
       expect(volumeRadiobutton).not.toBeNull();
     });
+
+    xit('should display temp units in input/target units when temp conversion type', () => {
+
+    });
+
+    xit('should display volume units in input/target units when vol conversion type', () => {
+
+    });
   });
 
-  fdescribe('isValidInput()', () => {
+  describe('isValidInput()', () => {
     const formControlsToValidate = [
       { control: 'inputValue', inputValue: '2', expectedValue: true },
       { control: 'inputValue', inputValue: 'woof', expectedValue: false },
@@ -88,41 +97,63 @@ describe('ConversionComponent', () => {
         expect(result).toEqual(test.expectedValue);
       });
     });
+  });
 
+  describe('convertUnits()', () => {
     const temperatureConversionTestCases = [
       {
-        inputValue: '123',
-        inputUnits: '',
-        targetUnits: '',
-        studentInput: '',
-        expectedResult: 'correct',
+        inputValue: 32,
+        inputUnits: {value: 'degF'},
+        targetUnits: {value: 'degC'},
+        expectedResult: 0,
       },
-      // { inputValue: '123', inputUnits: '', targetUnits: '', studentInput: '', expectedResult: 'incorrect'},
-      // { inputValue: '123', inputUnits: '', targetUnits: '', studentInput: '', expectedResult: 'correct'},
+      {
+        inputValue: 0,
+        inputUnits: {value: 'degC'},
+        targetUnits: {value: 'degF'},
+        expectedResult: 32,
+      },
+      {
+        inputValue: 32,
+        inputUnits: {value: 'degF'},
+        targetUnits: {value: 'degF'},
+        expectedResult: 32,
+      },
+      {
+        inputValue: 0,
+        inputUnits: {value: 'degC'},
+        targetUnits: {value: 'degC'},
+        expectedResult: 0,
+      },
+      {
+        inputValue: 0,
+        inputUnits: {value: 'degC'},
+        targetUnits: {value: 'K'},
+        expectedResult: 273.15,
+      },
+      {
+        inputValue: 0,
+        inputUnits: {value: 'degC'},
+        targetUnits: {value: 'degR'},
+        expectedResult: 491.67,
+      },
     ];
 
     temperatureConversionTestCases.forEach((test) => {
-      xit(`should return "${test.expectedResult}" with student answer "${test.studentInput}"
-          for ${test.inputValue}${test.inputUnits} to ${test.targetUnits}`, () => {
-        component.conversionForm.setValue({
-          conversionTypeForm: { conversionType: 'temperature' },
-          inputValue: test.inputValue,
-          inputUnits: test.inputUnits,
-          targetUnits: test.targetUnits,
-          studentInput: test.studentInput,
-        });
-        component.checkAnswer();
-        fixture.detectChanges();
+      it(`should return "${test.expectedResult}" for
+         ${test.inputValue} ${test.inputUnits.value} to ${test.targetUnits.value}`, () => {
+        const result = component.convertUnits(
+          Number(test.inputValue),
+          test.inputUnits.value,
+          test.targetUnits.value
+        );
 
-        expect(component.result).toEqual(test.expectedResult);
+        expect(Number(result.toFixed(2))).toEqual(test.expectedResult);
       });
-
-      // todo: check that checkAnswer calls isNotValidInput
-      // maybe break out methods into separate describes rather than one giant checkAnswer
     });
   });
 
-  fdescribe('roundedAnswersMatch()', () => {
+  describe('roundedAnswersMatch()', () => {
     it('should return true if answers match when rounded', () => {
       const controlValue = '9.67';
       const realAnswer = 9.66;
@@ -133,9 +164,16 @@ describe('ConversionComponent', () => {
       ) as FormControl;
 
       control?.setValue(controlValue);
-      const result = component.roundedAnswersMatch(realAnswer, Number(control.value), decimalPlace);
+      const result = component.roundedAnswersMatch(
+        realAnswer,
+        Number(control.value),
+        decimalPlace
+      );
 
-      expect(result).toEqual(true, `${controlValue} does not equal ${realAnswer} when rounded to ${decimalPlace} decimal`);
+      expect(result).toEqual(
+        true,
+        `${controlValue} does not equal ${realAnswer} when rounded to ${decimalPlace} decimal`
+      );
     });
 
     it('should return false if answers do not match when rounded', () => {
@@ -148,9 +186,36 @@ describe('ConversionComponent', () => {
       ) as FormControl;
 
       control?.setValue(controlValue);
-      const result = component.roundedAnswersMatch(realAnswer, Number(control.value), decimalPlace);
+      const result = component.roundedAnswersMatch(
+        realAnswer,
+        Number(control.value),
+        decimalPlace
+      );
 
-      expect(result).toBe(false, `${controlValue} should not equal ${realAnswer} when rounded to ${decimalPlace} decimal`);
+      expect(result).toBe(
+        false,
+        `${controlValue} should not equal ${realAnswer} when rounded to ${decimalPlace} decimal`
+      );
     });
+  });
+
+  xdescribe('checkAnswer()', () => {
+    // calls isValidInput and sets result to invalid if true
+    // calls isValidInput true, should call isCorrectConversion
+  });
+
+  xdescribe('isCorrectConversion()', () => {
+    it('should convertUnits()', () => {
+      // spyOn(component, 'convertUnits').and.callThrough();
+
+      // expect(component.convertUnits).toHaveBeenCalledTimes(1);
+    });
+
+    // calls roundedAnswersMatch and returns correct if true
+    // calls roundedAnswersMatch and returns incorrect if false
+  });
+
+  xdescribe('pickInputUnits(), pickTargetUnits', () => {
+    // updates the conversionForm
   });
 });

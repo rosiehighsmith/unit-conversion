@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { TemperatureUnit, VolumeUnit } from '../enums';
+import { unit } from 'mathjs';
 
 @Component({
   selector: 'app-conversion',
@@ -28,8 +30,21 @@ export class ConversionComponent implements OnInit {
     return this.conversionForm.get('studentInput') as FormControl;
   }
 
-  temperatureInputUnits: string[] = ['C', 'F', 'K', 'R'];
-  volumeInputUnits: string[] = ['L', 'Tb', 'Cubic In', 'c', 'Cubic Ft', 'Gal'];
+  temperatureInputUnits = [
+    { value: 'degC', displayValue: TemperatureUnit.Celsius },
+    { value: 'degF', displayValue: TemperatureUnit.Fahrenheit },
+    { value: 'K', displayValue: TemperatureUnit.Kelvin },
+    { value: 'degR', displayValue: TemperatureUnit.Rankine }
+  ];
+
+  volumeInputUnits = [
+    { value: 'cuft', displayValue: VolumeUnit.CubicFeet },
+    { value: 'cuin', displayValue: VolumeUnit.CubicInches },
+    { value: 'cup', displayValue: VolumeUnit.Cups }, // liquid vol
+    { value: 'gallon', displayValue: VolumeUnit.Gallons }, // liquid vol
+    { value: 'litre', displayValue: VolumeUnit.Liters },
+    { value: 'tablespoon', displayValue: VolumeUnit.Tablespoons }
+  ];
 
   constructor(private fb: FormBuilder) {
     this.conversionTypeForm = this.fb.group({
@@ -41,7 +56,7 @@ export class ConversionComponent implements OnInit {
       inputValue: [''],
       inputUnits: [''],
       targetUnits: [''],
-      studentInput: ['']
+      studentInput: [''],
     });
   }
 
@@ -49,8 +64,8 @@ export class ConversionComponent implements OnInit {
 
   checkAnswer(): void {
     if (
-      this.isValidInput(this.studentInputControl) ||
-      this.isValidInput(this.inputValueControl)
+      !this.isValidInput(this.studentInputControl) ||
+      !this.isValidInput(this.inputValueControl)
     ) {
       this.result = 'invalid';
       return;
@@ -64,20 +79,40 @@ export class ConversionComponent implements OnInit {
   }
 
   isCorrectConversion(): string {
-    const realAnswer = this.convert(this.inputUnitsControl.value, this.targetUnitsControl.value);
+    const realAnswer = this.convertUnits(
+      this.inputValueControl.value,
+      this.inputUnitsControl.value,
+      this.targetUnitsControl.value
+    );
 
-    if (this.roundedAnswersMatch(realAnswer, Number(this.studentInputControl.value), 1)) {
+    if (
+      this.roundedAnswersMatch(
+        Number(realAnswer),
+        Number(this.studentInputControl.value),
+        1
+      )
+    ) {
       return 'correct';
     }
     return 'incorrect';
   }
 
-  roundedAnswersMatch(realAnswer: number, studentAnswer: number, decimalPoints: number): boolean {
-    return realAnswer.toFixed(decimalPoints) === studentAnswer.toFixed(decimalPoints);
+  convertUnits(
+    inputValue: number,
+    inputUnits: string,
+    targetUnits: string
+  ): number {
+    return unit(`${inputValue} ${inputUnits}`).toNumber(targetUnits);
   }
 
-  convert(inputUnits: string, targetUnits: string): number {
-    return 9.66;
+  roundedAnswersMatch(
+    realAnswer: number,
+    studentAnswer: number,
+    decimalPoints: number
+  ): boolean {
+    return (
+      realAnswer.toFixed(decimalPoints) === studentAnswer.toFixed(decimalPoints)
+    );
   }
 
   pickInputUnits(event: any): void {
