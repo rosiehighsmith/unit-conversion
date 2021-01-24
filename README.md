@@ -14,7 +14,7 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Accessing the hosted app
 
-This app has CI/CD implemented with AWS CodePipeline and is statically hosted on S3. To access this production build, click [here](todo).
+This app has CI/CD implemented with AWS CodePipeline and is statically hosted on S3. To access this production build, click [here](http://unit-conversion-bucket.s3-website-us-west-2.amazonaws.com/).
 
 ## Next steps in development to improve the solution
 
