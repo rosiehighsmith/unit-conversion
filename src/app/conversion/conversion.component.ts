@@ -26,8 +26,8 @@ export class ConversionComponent implements OnInit {
   get targetUnitsControl(): FormControl {
     return this.conversionForm.get('targetUnits') as FormControl;
   }
-  get studentInputControl(): FormControl {
-    return this.conversionForm.get('studentInput') as FormControl;
+  get studentResponseControl(): FormControl {
+    return this.conversionForm.get('studentResponse') as FormControl;
   }
 
   temperatureInputUnits = [
@@ -56,7 +56,7 @@ export class ConversionComponent implements OnInit {
       inputValue: [''],
       inputUnits: [''],
       targetUnits: [''],
-      studentInput: [''],
+      studentResponse: [''],
     });
   }
 
@@ -64,7 +64,7 @@ export class ConversionComponent implements OnInit {
 
   checkAnswer(): void {
     if (
-      !this.isValidInput(this.studentInputControl) ||
+      !this.isValidInput(this.studentResponseControl) ||
       !this.isValidInput(this.inputValueControl)
     ) {
       this.result = 'invalid';
@@ -88,7 +88,7 @@ export class ConversionComponent implements OnInit {
     if (
       this.roundedAnswersMatch(
         Number(realAnswer),
-        Number(this.studentInputControl.value),
+        Number(this.studentResponseControl.value),
         1
       )
     ) {

@@ -39,7 +39,7 @@ describe('ConversionComponent', () => {
       { formControlName: 'inputValue', expectedValue: '' },
       { formControlName: 'inputUnits', expectedValue: '' },
       { formControlName: 'targetUnits', expectedValue: '' },
-      { formControlName: 'studentInput', expectedValue: '' },
+      { formControlName: 'studentResponse', expectedValue: '' },
     ];
 
     defaultFormControls.forEach((test) => {
@@ -80,8 +80,8 @@ describe('ConversionComponent', () => {
     const formControlsToValidate = [
       { control: 'inputValue', inputValue: '2', expectedValue: true },
       { control: 'inputValue', inputValue: 'woof', expectedValue: false },
-      { control: 'studentInput', inputValue: '34', expectedValue: true },
-      { control: 'studentInput', inputValue: 'woof', expectedValue: false },
+      { control: 'studentResponse', inputValue: '34', expectedValue: true },
+      { control: 'studentResponse', inputValue: 'woof', expectedValue: false },
     ];
 
     formControlsToValidate.forEach((test) => {
@@ -100,6 +100,7 @@ describe('ConversionComponent', () => {
   });
 
   describe('convertUnits()', () => {
+    // todo: check conversion from each of the types (not all tho)
     const temperatureConversionTestCases = [
       {
         inputValue: 32,
@@ -159,9 +160,7 @@ describe('ConversionComponent', () => {
       const realAnswer = 9.66;
       const decimalPlace = 1;
 
-      const control = component.conversionForm.get(
-        'studentInput'
-      ) as FormControl;
+      const control = component.studentResponseControl;
 
       control?.setValue(controlValue);
       const result = component.roundedAnswersMatch(
@@ -181,9 +180,7 @@ describe('ConversionComponent', () => {
       const realAnswer = 10;
       const decimalPlace = 1;
 
-      const control = component.conversionForm.get(
-        'studentInput'
-      ) as FormControl;
+      const control = component.studentResponseControl;
 
       control?.setValue(controlValue);
       const result = component.roundedAnswersMatch(

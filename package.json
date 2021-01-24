@@ -6,8 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers ChromeHeadless --code-coverage",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "build-prod": "ng build --prod --no-progress"
   },
   "private": true,
   "dependencies": {
