@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { TemperatureUnit, VolumeUnit, SystemResponse } from '../enums';
-import { InputDisplay } from './conversion.model';
-import { UnitService } from '../services/unit.service';
+import {  SystemResponse } from '../enums';
+import { temperatureInputUnits, volumeInputUnits } from './input-units';
 
 import { unit } from 'mathjs';
 
@@ -16,6 +15,8 @@ export class ConversionComponent implements OnInit {
   conversionTypeForm: FormGroup = new FormGroup({});
   conversionForm: FormGroup = new FormGroup({});
   result = '';
+  temperatureSelectOptions = temperatureInputUnits;
+  volumeSelectOptions = volumeInputUnits;
 
   get conversionTypeControl(): FormControl {
     return this.conversionTypeForm.get('conversionType') as FormControl;
@@ -32,22 +33,6 @@ export class ConversionComponent implements OnInit {
   get studentResponseControl(): FormControl {
     return this.conversionForm.get('studentResponse') as FormControl;
   }
-
-  temperatureInputUnits: InputDisplay[] = [
-    { value: 'degC', displayValue: TemperatureUnit.Celsius },
-    { value: 'degF', displayValue: TemperatureUnit.Fahrenheit },
-    { value: 'K', displayValue: TemperatureUnit.Kelvin },
-    { value: 'degR', displayValue: TemperatureUnit.Rankine },
-  ];
-
-  volumeInputUnits: InputDisplay[] = [
-    { value: 'cuft', displayValue: VolumeUnit.CubicFeet },
-    { value: 'cuin', displayValue: VolumeUnit.CubicInches },
-    { value: 'cup', displayValue: VolumeUnit.Cups },
-    { value: 'gallon', displayValue: VolumeUnit.Gallons },
-    { value: 'litre', displayValue: VolumeUnit.Liters },
-    { value: 'tablespoon', displayValue: VolumeUnit.Tablespoons },
-  ];
 
   constructor(private fb: FormBuilder) {}
 

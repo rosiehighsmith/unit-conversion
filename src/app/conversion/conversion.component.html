@@ -33,7 +33,7 @@
       (change)="pickInputUnits($any($event.target).value)"
       id="temperature_select_input"
     >
-      <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">
+      <option *ngFor="let unit of temperatureSelectOptions" [value]="unit.value">
         {{ unit.displayValue }}
       </option>
     </select>
@@ -43,7 +43,7 @@
         (change)="pickInputUnits($any($event.target).value)"
         id="volume_select_input"
       >
-        <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">
+        <option *ngFor="let unit of volumeSelectOptions" [value]="unit.value">
           {{ unit.displayValue }}
         </option>
       </select>
@@ -57,7 +57,7 @@
       (change)="pickTargetUnits($any($event.target).value)"
       id="temperature_select_target"
     >
-      <option *ngFor="let unit of temperatureInputUnits" [value]="unit.value">
+      <option *ngFor="let unit of temperatureSelectOptions" [value]="unit.value">
         {{ unit.displayValue }}
       </option>
     </select>
@@ -67,7 +67,7 @@
         (change)="pickTargetUnits($any($event.target).value)"
         id="volume_select_target"
       >
-        <option *ngFor="let unit of volumeInputUnits" [value]="unit.value">
+        <option *ngFor="let unit of volumeSelectOptions" [value]="unit.value">
           {{ unit.displayValue }}
         </option>
       </select>

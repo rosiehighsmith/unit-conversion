@@ -3,8 +3,8 @@ import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { ConversionComponent } from './conversion.component';
-import { SystemResponse } from '../enums';
+import { ConversionComponent } from '../conversion.component';
+import { SystemResponse } from '../../enums';
 import {
   correctCompletedForm,
   defaultFormControls,
@@ -277,14 +277,14 @@ describe('ConversionComponent', () => {
       for (let index = 0; index < temperatureInputOptions.length; index++) {
         const option = temperatureInputOptions[index];
         expect(option.nativeElement.label).toBe(
-          component.temperatureInputUnits[index].displayValue
+          component.temperatureSelectOptions[index].displayValue
         );
       }
 
       for (let index = 0; index < temperatureTargetOptions.length; index++) {
         const option = temperatureTargetOptions[index];
         expect(option.nativeElement.label).toBe(
-          component.temperatureInputUnits[index].displayValue
+          component.temperatureSelectOptions[index].displayValue
         );
       }
     });
@@ -306,14 +306,14 @@ describe('ConversionComponent', () => {
       for (let index = 0; index < volumeSelectOptions.length; index++) {
         const option = volumeSelectOptions[index];
         expect(option.nativeElement.label).toBe(
-          component.volumeInputUnits[index].displayValue
+          component.volumeSelectOptions[index].displayValue
         );
       }
 
       for (let index = 0; index < volumeTargetOptions.length; index++) {
         const option = volumeTargetOptions[index];
         expect(option.nativeElement.label).toBe(
-          component.volumeInputUnits[index].displayValue
+          component.volumeSelectOptions[index].displayValue
         );
       }
     });
